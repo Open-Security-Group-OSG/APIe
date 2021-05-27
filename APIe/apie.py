@@ -1,35 +1,13 @@
-import shodan
 from argparse import ArgumentParser
 import csv
-
-
-COLORS = {
-    "RED":"\u001b[31m",
-    "GREEN":"\u001b[32m",
-    "CYAN":"\u001b[36m",
-    "RESET":"\u001b[0m",
-    "BOLD":"\u001b[1m"
-}
-bold_green = f"{COLORS['BOLD']}{COLORS['GREEN']}"
-bold_red = f"{COLORS['BOLD']}{COLORS['RED']}"
-bold_cyan = f"{COLORS['BOLD']}{COLORS['CYAN']}"
-reset = COLORS['RESET']
+from other.style import bold_cyan, bold_green, bold_red, reset
+from shodan_api.shodan import check as check_shodan
+from censys_api.censys_api import check as check_censys
 
 parser = ArgumentParser()
 parser.add_argument("-i", "--input", dest="input_list", metavar="FILE_NAME" , help="Specify shodan API keys list to check, one key per line")
 parser.add_argument("-o", "--output", dest="output_list", metavar="FILE_NAME", help="Specify output csv file")
 args = parser.parse_args()
-
-
-def check(key: str):
-    api = shodan.Shodan(key)
-    try:
-        key_plan = api.info()['plan']
-        print(f'{key} is {bold_green}VALID{reset} and {bold_cyan}{str(key_plan).upper()}{reset}')
-        return [key, True, key_plan]
-    except:
-        print(f'{key} is {bold_red}INVALID{reset}')
-        return [key, False]
 
 if __name__ in "__main__":
     if args.input_list is None:
@@ -39,54 +17,73 @@ if __name__ in "__main__":
     with open(args.input_list, 'r') as keys_list:
         deduplicated = list(dict.fromkeys(keys_list.readlines()))
         keys_to_check = []
-        dev_keys = []
-        edu_keys = []
-        oss_keys = []
-        basic_keys = []
-        invalid_keys = []
+        shodan_dev_keys = []
+        shodan_edu_keys = []
+        shodan_oss_keys = []
+        shodan_basic_keys = []
+        shodan_invalid_keys = []
+        
         for key in deduplicated:
             new_key = key.replace("\n", "")
             keys_to_check.append(new_key)
 
         for key in keys_to_check:
             key = key.strip()
-            result = check(key)
+            result = check_shodan(key)
         
             if result[1] is False:
-                invalid_keys.append(result[0])
+                shodan_invalid_keys.append(result[0])
             elif result[2] == 'dev':
-                dev_keys.append(result[0])
+                shodan_dev_keys.append(result[0])
             elif result[2] == 'edu':
-                edu_keys.append(result[0])
+                shodan_edu_keys.append(result[0])
             elif result[2] == 'oss':
-                oss_keys.append(result[0])
+                shodan_oss_keys.append(result[0])
             elif result[2] == 'basic':
-                basic_keys.append(result[0])
+                shodan_basic_keys.append(result[0])
             else:
-                pass
+                shodan_invalid_keys.append(result[0])
+
+        censys_valid_keys = []
+        censys_invalid_keys = []
+        for key in shodan_invalid_keys:
+            result = check_censys(key)
+            
+            if result[1] is False:
+                censys_invalid_keys.append(result[0])
+            elif result[1] is True:
+                censys_valid_keys.append([result[0], result[2]])
+            else:
+                censys_invalid_keys.append(result[0])
 
         output_name = "output.csv" if args.output_list == None else args.output_list
         output_name = f'{output_name}.csv' if 'csv' not in output_name else output_name
         with open(output_name, 'w') as output_list:
             keys_writer = csv.writer(output_list)
-            keys_writer.writerow(['key', 'type'])
-            for key in dev_keys:
-                keys_writer.writerow([key, 'DEV'])
-            for key in edu_keys:
-                keys_writer.writerow([key, 'EDU'])
-            for key in oss_keys:
-                keys_writer.writerow([key, 'OSS'])
-            for key in basic_keys:
-                keys_writer.writerow([key, 'BASIC'])
+            keys_writer.writerow(['app', 'key', 'info'])
+            for key in shodan_dev_keys:
+                keys_writer.writerow(['shodan', key, 'DEV'])
+            for key in shodan_edu_keys:
+                keys_writer.writerow(['shodan', key, 'EDU'])
+            for key in shodan_oss_keys:
+                keys_writer.writerow(['shodan', key, 'OSS'])
+            for key in shodan_basic_keys:
+                keys_writer.writerow(['shodan', key, 'BASIC'])
+            for key in censys_valid_keys:
+                keys_writer.writerow(['censys', key[0], key[1]])
 
-        print(f'\n{bold_cyan}[+] Valid DEV Keys{reset}')
-        for i in dev_keys: print(i)
-        print(f'\n{bold_cyan}[+] Valid EDU Keys{reset}')
-        for i in edu_keys: print(i)
-        print(f'\n{bold_cyan}[+] Valid OSS Keys{reset}')
-        for i in edu_keys: print(i)
-        print(f'\n{bold_cyan}[+] Valid BASIC Keys{reset}')
-        for i in basic_keys: print(i)
+        print(f'\n{bold_cyan}[+] Valid SHODAN DEV Keys{reset}')
+        for i in shodan_dev_keys: print(i)
+        print(f'\n{bold_cyan}[+] Valid SHODAN EDU Keys{reset}')
+        for i in shodan_edu_keys: print(i)
+        print(f'\n{bold_cyan}[+] Valid SHODAN OSS Keys{reset}')
+        for i in shodan_oss_keys: print(i)
+        print(f'\n{bold_cyan}[+] Valid SHODAN BASIC Keys{reset}')
+        for i in shodan_basic_keys: print(i)
+        print(f'\n{bold_cyan}[+] Valid CENSYS Keys{reset}')
+        for i in censys_valid_keys: print(f'{i[0]} {i[1]}')
+
         print(f"\nTotal keys: {bold_cyan}{len(keys_to_check)}{reset}")
-        print(f"DEV keys: {bold_green}{len(dev_keys)}{reset}, EDU keys: {bold_green}{len(edu_keys)}{reset}, OSS keys: {bold_green}{len(oss_keys)}{reset}, BASIC keys: {bold_green}{len(basic_keys)}{reset}")
-        print(f"Invalid keys: {bold_red}{len(invalid_keys)}")
+        print(f"{bold_cyan}[SHODAN]{reset} DEV keys: {bold_green}{len(shodan_dev_keys)}{reset}, EDU keys: {bold_green}{len(shodan_edu_keys)}{reset}, OSS keys: {bold_green}{len(shodan_oss_keys)}{reset}, BASIC keys: {bold_green}{len(shodan_basic_keys)}{reset}")
+        print(f"{bold_cyan}[CENSYS]{reset} Valid keys: {bold_green}{len(censys_valid_keys)}{reset}")
+        print(f"Invalid keys: {bold_red}{len(censys_invalid_keys)}")
