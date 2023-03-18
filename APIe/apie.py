@@ -39,19 +39,11 @@ if __name__ in "__main__":
 
         # VirusTotal validation
         for key in censys_invalid_keys:
-            result = check_virustotal(key)
+            check_virustotal(key)
 
-            if result[1] is False:
-                vt_invalid_keys.append(result[0])
-            elif result[1] is True:
-                vt_valid_keys.append([result[0], result[2]])
-            else:
-                vt_invalid_keys.append(result[0])
-                print(f'{bold_yellow}[ATTENTION]{reset} Weird key detected - {bold_red}{result[0]}{reset}, {bold_red}manual verification required{reset}')
         # BinaryEdge validation
         for key in vt_invalid_keys:
             check_binaryedge(key)
-
 
         output_name = "output.csv" if args.output_list is None else args.output_list
         output_name = f'{output_name}.csv' if 'csv' not in output_name else output_name
