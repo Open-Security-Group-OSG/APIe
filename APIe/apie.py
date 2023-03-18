@@ -42,7 +42,6 @@ if __name__ in "__main__":
                 shodan_invalid_keys.append(result[0])
 
         # Censys validation begins
-        censys_invalid_keys = []
         for key in shodan_invalid_keys:
             result = check_censys(key)
             
