@@ -38,7 +38,6 @@ if __name__ in "__main__":
             check_censys(key)
 
         # VirusTotal validation
-        # VirusTotal validation begins
         for key in censys_invalid_keys:
             result = check_virustotal(key)
 
@@ -49,7 +48,7 @@ if __name__ in "__main__":
             else:
                 vt_invalid_keys.append(result[0])
                 print(f'{bold_yellow}[ATTENTION]{reset} Weird key detected - {bold_red}{result[0]}{reset}, {bold_red}manual verification required{reset}')
-        # BinaryEdge validation begins
+        # BinaryEdge validation
         for key in vt_invalid_keys:
             check_binaryedge(key)
 

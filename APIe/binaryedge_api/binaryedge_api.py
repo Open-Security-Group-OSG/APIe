@@ -12,6 +12,7 @@ def check(key: str):
     try:
         key_plan = get('https://api.binaryedge.io/v2/user/subscription', headers={'X-Key':f'{key}'}).json()['subscription']['name']
         print(f'{key} is a {bold_green}VALID{reset} {bold_yellow}BINARYEDGE KEY{reset} and plan is {bold_cyan}{str(key_plan).upper()}{reset}')
+
         match key_plan.lower():
             case 'free':
                 binaryedge_free_keys.append(key)
