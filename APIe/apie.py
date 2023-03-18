@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 import csv
 from textwrap import dedent
 from other.style import bold_cyan, bold_green, bold_red, bold_yellow, reset
+from other.output import open_csv_file, write_to_csv
 from shodan_api.shodan_api import check as check_shodan
 from shodan_api.shodan_api import shodan_basic_keys, shodan_dev_keys, shodan_edu_keys, shodan_oss_keys, shodan_invalid_keys
 from censys_api.censys_api import check as check_censys
@@ -44,31 +45,22 @@ if __name__ in "__main__":
         for key in vt_invalid_keys:
             check_binaryedge(key)
 
-        output_name = "output.csv" if args.output_list is None else args.output_list
-        output_name = f'{output_name}.csv' if 'csv' not in output_name else output_name
-        with open(output_name, 'w') as output_list:  # TODO Move out of main file
-            keys_writer = csv.writer(output_list)
-            keys_writer.writerow(['app', 'key', 'info'])
-            for key in shodan_dev_keys:
-                keys_writer.writerow(['shodan', key, 'DEV'])
-            for key in shodan_edu_keys:
-                keys_writer.writerow(['shodan', key, 'EDU'])
-            for key in shodan_oss_keys:
-                keys_writer.writerow(['shodan', key, 'OSS'])
-            for key in shodan_basic_keys:
-                keys_writer.writerow(['shodan', key, 'BASIC'])
-            for key in censys_valid_keys:
-                keys_writer.writerow(['censys', key[0], key[1]])
-            for key in vt_valid_keys:
-                keys_writer.writerow(['virustotal', key[0], key[1]])
-            for key in binaryedge_free_keys:
-                keys_writer.writerow(['binaryedge', key, 'Free'])
-            for key in binaryedge_starter_keys:
-                keys_writer.writerow(['binaryedge', key, 'Starter'])
-            for key in binaryedge_business_keys:
-                keys_writer.writerow(['binaryedge', key, 'Business'])
-            for key in binaryedge_enterprise_keys:
-                keys_writer.writerow(['binaryedge', key, 'Enterprise'])
+        output_file = open_csv_file("output" if args.output_list is None else args.output_list)
+
+        # Writing Shodan
+        write_to_csv('shodan', shodan_basic_keys, output_file)
+        write_to_csv('shodan', shodan_oss_keys, output_file)
+        write_to_csv('shodan', shodan_dev_keys, output_file)
+        write_to_csv('shodan', shodan_edu_keys, output_file)
+        # Writing Censys
+        write_to_csv('censys', censys_valid_keys, output_file)
+        # Writing VirusTotal
+        write_to_csv('virustotal', vt_valid_keys, output_file)
+        # Writing BinaryEdge
+        write_to_csv('binaryedge', binaryedge_free_keys, output_file)
+        write_to_csv('binaryedge', binaryedge_starter_keys, output_file)
+        write_to_csv('binaryedge', binaryedge_business_keys, output_file)
+        write_to_csv('binaryedge', binaryedge_enterprise_keys, output_file)
 
         print(f'\n{bold_cyan}[+] Valid SHODAN DEV Keys{reset}')
         for i in shodan_dev_keys: print(i)
