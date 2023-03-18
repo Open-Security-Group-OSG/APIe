@@ -35,15 +35,9 @@ if __name__ in "__main__":
 
         # Censys validation
         for key in shodan_invalid_keys:
-            result = check_censys(key)
+            check_censys(key)
 
-            if result[1] is False:
-                censys_invalid_keys.append(result[0])
-            elif result[1] is True:
-                censys_valid_keys.append([result[0], result[2]])
-            else:
-                censys_invalid_keys.append(result[0])
-                print(f'{bold_yellow}[ATTENTION]{reset} Weird key detected - {bold_red}{result[0]}{reset}, {bold_red}manual verification required{reset}')
+        # VirusTotal validation
         # VirusTotal validation begins
         for key in censys_invalid_keys:
             result = check_virustotal(key)
