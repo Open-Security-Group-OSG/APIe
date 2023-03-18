@@ -133,3 +133,7 @@ dmypy.json
 *.csv
 
 .idea/
+
+testing.py
+
+example.keys
