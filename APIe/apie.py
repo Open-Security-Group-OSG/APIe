@@ -2,9 +2,12 @@ from argparse import ArgumentParser
 import csv
 from textwrap import dedent
 from other.style import bold_cyan, bold_green, bold_red, bold_yellow, reset
+from shodan_api.shodan_api import check as check_shodan
 from shodan_api.shodan_api import shodan_basic_keys, shodan_dev_keys, shodan_edu_keys, shodan_oss_keys, shodan_invalid_keys
 from censys_api.censys_api import check as check_censys
 from censys_api.censys_api import censys_valid_keys, censys_invalid_keys
+from virustotal_api.virustotal_api import check as check_virustotal
+from virustotal_api.virustotal_api import vt_valid_keys, vt_invalid_keys
 
 parser = ArgumentParser()
 parser.add_argument("-i", "--input", dest="input_list", metavar="FILE_NAME" , help="Specify shodan API keys list to check, one key per line")
@@ -51,8 +54,19 @@ if __name__ in "__main__":
             else:
                 censys_invalid_keys.append(result[0])
                 print(f'{bold_yellow}[ATTENTION]{reset} Weird key detected - {bold_red}{result[0]}{reset}, {bold_red}manual verification required{reset}')
+        # VirusTotal validation begins
+        for key in censys_invalid_keys:
+            result = check_virustotal(key)
 
-        output_name = "output.csv" if args.output_list == None else args.output_list
+            if result[1] is False:
+                vt_invalid_keys.append(result[0])
+            elif result[1] is True:
+                vt_valid_keys.append([result[0], result[2]])
+            else:
+                vt_invalid_keys.append(result[0])
+                print(f'{bold_yellow}[ATTENTION]{reset} Weird key detected - {bold_red}{result[0]}{reset}, {bold_red}manual verification required{reset}')
+
+        output_name = "output.csv" if args.output_list is None else args.output_list
         output_name = f'{output_name}.csv' if 'csv' not in output_name else output_name
         with open(output_name, 'w') as output_list:
             keys_writer = csv.writer(output_list)
@@ -67,6 +81,8 @@ if __name__ in "__main__":
                 keys_writer.writerow(['shodan', key, 'BASIC'])
             for key in censys_valid_keys:
                 keys_writer.writerow(['censys', key[0], key[1]])
+            for key in vt_valid_keys:
+                keys_writer.writerow(['virustotal', key[0], key[1]])
 
         print(f'\n{bold_cyan}[+] Valid SHODAN DEV Keys{reset}')
         for i in shodan_dev_keys: print(i)
@@ -78,6 +94,8 @@ if __name__ in "__main__":
         for i in shodan_basic_keys: print(i)
         print(f'\n{bold_cyan}[+] Valid CENSYS Keys{reset}')
         for i in censys_valid_keys: print(f'{i[0]} {i[1]}')
+        print(f'\n{bold_cyan}[+] Valid VirusTotal Keys{reset}')
+        for i in vt_valid_keys: print(f'{i[0]} {i[1]}')
 
         print(f"\nTotal keys: {bold_cyan}{len(keys_to_check)}{reset}")
         print(" ".join(dedent(f"""{bold_cyan}[SHODAN]{reset} 
@@ -86,5 +104,5 @@ if __name__ in "__main__":
             OSS keys: {bold_green}{len(shodan_oss_keys)}{reset}, 
             BASIC keys: {bold_green}{len(shodan_basic_keys)}{reset}""").replace('\n', '').split()))
         print(f"{bold_cyan}[CENSYS]{reset} Valid keys: {bold_green}{len(censys_valid_keys)}{reset}")
-        print(f"Invalid keys: {bold_red}{len(censys_invalid_keys)}")
+        print(f"{bold_cyan}[VIRUSTOTAL]{reset} Valid keys: {bold_green}{len(vt_valid_keys)}{reset}")
         print(f"Invalid keys: {bold_red}{len(censys_invalid_keys)}{reset}")
