@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 import csv
-from other.style import bold_cyan, bold_green, bold_red, reset
-from shodan_api.shodan import check as check_shodan
+from textwrap import dedent
+from other.style import bold_cyan, bold_green, bold_red, bold_yellow, reset
 from shodan_api.shodan_api import shodan_basic_keys, shodan_dev_keys, shodan_edu_keys, shodan_oss_keys, shodan_invalid_keys
 from censys_api.censys_api import check as check_censys
 from censys_api.censys_api import censys_valid_keys, censys_invalid_keys
@@ -13,21 +13,20 @@ args = parser.parse_args()
 
 if __name__ in "__main__":
     if args.input_list is None:
-        print("Please specify file containing list of keys")
+        print("Please specify file containing list of keys (-i, --input)")
         exit()
     print("Checking keys..")
+    # Shodan validation begins
     with open(args.input_list, 'r') as keys_list:
         deduplicated = list(dict.fromkeys(keys_list.readlines()))
         keys_to_check = []
-        
+
         for key in deduplicated:
-            new_key = key.replace("\n", "")
-            keys_to_check.append(new_key)
+            keys_to_check.append(key.replace("\n", ""))
 
         for key in keys_to_check:
-            key = key.strip()
-            result = check_shodan(key)
-        
+            result = check_shodan(key.strip())
+
             if result[1] is False:
                 shodan_invalid_keys.append(result[0])
             elif result[2] == 'dev':
@@ -40,17 +39,18 @@ if __name__ in "__main__":
                 shodan_basic_keys.append(result[0])
             else:
                 shodan_invalid_keys.append(result[0])
-
+                print(f'{bold_yellow}[ATTENTION]{reset} Weird key detected - {bold_red}{result[0]}{reset}, plan is {bold_cyan}{result[2]}{reset}, {bold_red}manual verification required{reset}')
         # Censys validation begins
         for key in shodan_invalid_keys:
             result = check_censys(key)
-            
+
             if result[1] is False:
                 censys_invalid_keys.append(result[0])
             elif result[1] is True:
                 censys_valid_keys.append([result[0], result[2]])
             else:
                 censys_invalid_keys.append(result[0])
+                print(f'{bold_yellow}[ATTENTION]{reset} Weird key detected - {bold_red}{result[0]}{reset}, {bold_red}manual verification required{reset}')
 
         output_name = "output.csv" if args.output_list == None else args.output_list
         output_name = f'{output_name}.csv' if 'csv' not in output_name else output_name
@@ -80,6 +80,11 @@ if __name__ in "__main__":
         for i in censys_valid_keys: print(f'{i[0]} {i[1]}')
 
         print(f"\nTotal keys: {bold_cyan}{len(keys_to_check)}{reset}")
-        print(f"{bold_cyan}[SHODAN]{reset} DEV keys: {bold_green}{len(shodan_dev_keys)}{reset}, EDU keys: {bold_green}{len(shodan_edu_keys)}{reset}, OSS keys: {bold_green}{len(shodan_oss_keys)}{reset}, BASIC keys: {bold_green}{len(shodan_basic_keys)}{reset}")
+        print(" ".join(dedent(f"""{bold_cyan}[SHODAN]{reset} 
+            DEV keys: {bold_green}{len(shodan_dev_keys)}{reset}, 
+            EDU keys: {bold_green}{len(shodan_edu_keys)}{reset}, 
+            OSS keys: {bold_green}{len(shodan_oss_keys)}{reset}, 
+            BASIC keys: {bold_green}{len(shodan_basic_keys)}{reset}""").replace('\n', '').split()))
         print(f"{bold_cyan}[CENSYS]{reset} Valid keys: {bold_green}{len(censys_valid_keys)}{reset}")
         print(f"Invalid keys: {bold_red}{len(censys_invalid_keys)}")
+        print(f"Invalid keys: {bold_red}{len(censys_invalid_keys)}{reset}")
