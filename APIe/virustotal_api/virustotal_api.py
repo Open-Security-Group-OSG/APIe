@@ -1,5 +1,6 @@
 from requests import get
 from other.logger import log
+from other.output import print_title, print_keys
 
 vt_valid_keys = []
 vt_invalid_keys = []
@@ -8,12 +9,18 @@ vt_invalid_keys = []
 def check(key: str):
     try:
         allowance = get(f'https://virustotal.com/api/v3/users/{key}', headers={'x-apikey': key}).json()['data']['attributes']['quotas']['api_requests_daily']['allowed']
-        log.info(f'[bold blue]{key}[/bold blue] is a [bold green]VALID[/bold green] [bold yellow]VIRUSTOTAL KEY[/bold yellow] and daily requests quota is [bold cyan]{allowance}[/bold cyan]')
+        log.info(f'[bold blue]{key}[/] is a [bold green]VALID[/] [bold yellow]VIRUSTOTAL KEY[/] and daily requests quota is [bold cyan]{allowance}[/]')
         vt_valid_keys.append([key, allowance])
 
         return [key, True, allowance]
     except:
-        log.info(f'[bold blue]{key}[/bold blue] is [bold red]INVALID[/bold red] as [bold yellow]VIRUSTOTAL KEY[/bold yellow]')
+        log.info(f'[bold blue]{key}[/] is [bold red]INVALID[/] as [bold yellow]VIRUSTOTAL KEY[/]')
 
         vt_invalid_keys.append(key)
         return [key, False]
+
+
+def present():
+    if vt_valid_keys:
+        print_title('VirusTotal')
+        print_keys(vt_valid_keys)
