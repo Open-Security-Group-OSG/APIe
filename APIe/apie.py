@@ -25,13 +25,12 @@ if __name__ in "__main__":
     with open(args.input_list, 'r') as keys_list:
         deduplicated = list(dict.fromkeys(keys_list.readlines()))
         keys_to_check = []
+        for key in deduplicated:
+            keys_to_check.append(key.replace("\n", "").strip())
 
         # Shodan validation
-        for key in deduplicated:
-            keys_to_check.append(key.replace("\n", ""))
-
         for key in keys_to_check:
-            check_shodan(key.strip())
+            check_shodan(key)
 
         # Censys validation
         for key in shodan_invalid_keys:
