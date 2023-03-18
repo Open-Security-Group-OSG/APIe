@@ -21,31 +21,19 @@ if __name__ in "__main__":
         print("Please specify file containing list of keys (-i, --input)")
         exit()
     print("Checking keys..")
-    # Shodan validation begins
+    # Keys deduplication
     with open(args.input_list, 'r') as keys_list:
         deduplicated = list(dict.fromkeys(keys_list.readlines()))
         keys_to_check = []
 
+        # Shodan validation
         for key in deduplicated:
             keys_to_check.append(key.replace("\n", ""))
 
         for key in keys_to_check:
-            result = check_shodan(key.strip())
+            check_shodan(key.strip())
 
-            if result[1] is False:
-                shodan_invalid_keys.append(result[0])
-            elif result[2] == 'dev':
-                shodan_dev_keys.append(result[0])
-            elif result[2] == 'edu':
-                shodan_edu_keys.append(result[0])
-            elif result[2] == 'oss':
-                shodan_oss_keys.append(result[0])
-            elif result[2] == 'basic':
-                shodan_basic_keys.append(result[0])
-            else:
-                shodan_invalid_keys.append(result[0])
-                print(f'{bold_yellow}[ATTENTION]{reset} Weird key detected - {bold_red}{result[0]}{reset}, plan is {bold_cyan}{result[2]}{reset}, {bold_red}manual verification required{reset}')
-        # Censys validation begins
+        # Censys validation
         for key in shodan_invalid_keys:
             result = check_censys(key)
 
