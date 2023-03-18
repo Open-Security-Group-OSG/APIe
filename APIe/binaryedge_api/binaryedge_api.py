@@ -1,5 +1,5 @@
 from requests import get
-from other.style import bold_green, bold_red, bold_cyan, bold_yellow, reset
+from other.logger import log
 
 binaryedge_free_keys = []
 binaryedge_starter_keys = []
@@ -10,8 +10,8 @@ binaryedge_invalid_keys = []
 
 def check(key: str):
     try:
-        key_plan = get('https://api.binaryedge.io/v2/user/subscription', headers={'X-Key':f'{key}'}).json()['subscription']['name']
-        print(f'{key} is a {bold_green}VALID{reset} {bold_yellow}BINARYEDGE KEY{reset} and plan is {bold_cyan}{str(key_plan).upper()}{reset}')
+        key_plan = get('https://api.binaryedge.io/v2/user/subscription', headers={'X-Key': f'{key}'}).json()['subscription']['name']
+        log.info(f'[bold blue]{key}[/bold blue] is a [bold green]VALID[/bold green] [bold yellow]BINARYEDGE KEY[/bold yellow] and plan is [bold cyan]{str(key_plan).upper()}[/bold cyan]')
 
         match key_plan.lower():
             case 'free':
@@ -24,10 +24,9 @@ def check(key: str):
                 binaryedge_enterprise_keys.append([key, key_plan])
             case _:
                 binaryedge_invalid_keys.append(key)
-                print(f'{bold_yellow}[ATTENTION]{reset} Weird key detected - {bold_red}{key}{reset}, plan is {bold_cyan}{key_plan}{reset}, {bold_red}manual verification required{reset}')
-
+                log.warning(f'[bold yellow][ATTENTION][/bold yellow] Weird key detected - [bold red]{key}[/bold red], plan is [bold cyan]{key_plan}[/bold cyan], [bold red]manual verification required[/bold red]')
         return [key, True, key_plan]
     except:
-        print(f'{key} is {bold_red}INVALID{reset} as {bold_yellow}BINARYEDGE KEY{reset}')
+        log.info(f'[bold blue]{key}[/bold blue] is [bold red]INVALID[/bold red] as [bold yellow]BINARYEDGE KEY[/bold yellow]')
         binaryedge_invalid_keys.append(key)
         return [key, False]

@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 import csv
 from textwrap import dedent
 from other.output import open_csv_file, write_to_csv
+from other.logger import logging, log, set_logging_config
 from shodan_api.shodan_api import check as check_shodan
 from shodan_api.shodan_api import shodan_basic_keys, shodan_dev_keys, shodan_edu_keys, shodan_oss_keys, shodan_invalid_keys
 from censys_api.censys_api import check as check_censys
@@ -22,7 +23,10 @@ if __name__ in "__main__":
     if args.input_list is None:
         print("Please specify file containing list of keys (-i, --input)")
         exit()
-    print("Checking keys..")
+
+    set_logging_config(level=logging.INFO)
+
+    log.info("[bold yellow]Checking keys...[/bold yellow]")
     # Keys deduplication
     with open(args.input_list, 'r') as keys_list:
         deduplicated = list(dict.fromkeys(keys_list.readlines()))
