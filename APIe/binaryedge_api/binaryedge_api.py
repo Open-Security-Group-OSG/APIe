@@ -15,13 +15,13 @@ def check(key: str):
 
         match key_plan.lower():
             case 'free':
-                binaryedge_free_keys.append(key)
+                binaryedge_free_keys.append([key, key_plan])
             case 'starter':
-                binaryedge_starter_keys.append(key)
+                binaryedge_starter_keys.append([key, key_plan])
             case 'business':
-                binaryedge_starter_keys.append(key)
+                binaryedge_starter_keys.append([key, key_plan])
             case 'enterprise':
-                binaryedge_enterprise_keys.append(key)
+                binaryedge_enterprise_keys.append([key, key_plan])
             case _:
                 binaryedge_invalid_keys.append(key)
                 print(f'{bold_yellow}[ATTENTION]{reset} Weird key detected - {bold_red}{key}{reset}, plan is {bold_cyan}{key_plan}{reset}, {bold_red}manual verification required{reset}')

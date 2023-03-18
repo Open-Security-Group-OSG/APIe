@@ -15,13 +15,13 @@ def check(key: str):
 
         match key_plan.lower():
             case 'basic':
-                shodan_basic_keys.append(key)
+                shodan_basic_keys.append([key, key_plan])
             case 'oss':
-                shodan_oss_keys.append(key)
+                shodan_oss_keys.append([key, key_plan])
             case 'dev':
-                shodan_dev_keys.append(key)
+                shodan_dev_keys.append([key, key_plan])
             case 'edu':
-                shodan_edu_keys.append(key)
+                shodan_edu_keys.append([key, key_plan])
             case _:
                 shodan_invalid_keys.append(key)
                 print(f'{bold_yellow}[ATTENTION]{reset} Weird key detected - {bold_red}{key}{reset}, plan is {bold_cyan}{key_plan}{reset}, {bold_red}manual verification required{reset}')
