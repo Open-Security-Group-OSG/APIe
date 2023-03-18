@@ -2,7 +2,9 @@ from argparse import ArgumentParser
 import csv
 from other.style import bold_cyan, bold_green, bold_red, reset
 from shodan_api.shodan import check as check_shodan
+from shodan_api.shodan_api import shodan_basic_keys, shodan_dev_keys, shodan_edu_keys, shodan_oss_keys, shodan_invalid_keys
 from censys_api.censys_api import check as check_censys
+from censys_api.censys_api import censys_valid_keys, censys_invalid_keys
 
 parser = ArgumentParser()
 parser.add_argument("-i", "--input", dest="input_list", metavar="FILE_NAME" , help="Specify shodan API keys list to check, one key per line")
@@ -17,11 +19,6 @@ if __name__ in "__main__":
     with open(args.input_list, 'r') as keys_list:
         deduplicated = list(dict.fromkeys(keys_list.readlines()))
         keys_to_check = []
-        shodan_dev_keys = []
-        shodan_edu_keys = []
-        shodan_oss_keys = []
-        shodan_basic_keys = []
-        shodan_invalid_keys = []
         
         for key in deduplicated:
             new_key = key.replace("\n", "")
@@ -44,7 +41,7 @@ if __name__ in "__main__":
             else:
                 shodan_invalid_keys.append(result[0])
 
-        censys_valid_keys = []
+        # Censys validation begins
         censys_invalid_keys = []
         for key in shodan_invalid_keys:
             result = check_censys(key)
