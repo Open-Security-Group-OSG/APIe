@@ -20,9 +20,9 @@ def present_valid_keys():
 
 def print_totals():
     # List every API here
-    print_total([binaryedge_free_keys, binaryedge_starter_keys, binaryedge_business_keys, binaryedge_enterprise_keys], app_name='[BINARYEDGE]')
+    print_total([binaryedge_free_keys, binaryedge_starter_keys, binaryedge_business_keys, binaryedge_enterprise_keys], app_name='\n[BINARYEDGE]')
     print_total([censys_valid_keys], app_name='[CENSYS] ')
-    print_total([shodan_basic_keys, shodan_oss_keys, shodan_dev_keys, shodan_edu_keys], app_name='\n[SHODAN] ')
+    print_total([shodan_basic_keys, shodan_oss_keys, shodan_dev_keys, shodan_edu_keys], app_name='[SHODAN] ')
     print_total([vt_valid_keys], app_name='[VIRUSTOTAL] ')
     # Total Invalid Keys
     print_total([invalid_keys[0]], is_valid=False, app_name='[bold blue]')
