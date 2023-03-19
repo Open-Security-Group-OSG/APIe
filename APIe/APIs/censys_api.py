@@ -1,7 +1,7 @@
 from requests import get
 from requests.auth import HTTPBasicAuth
 from other.logger import log
-from other.output import print_title, print_keys
+from other.output import print_title, print_keys, write_to_csv
 from other.lists import invalid_keys
 
 censys_valid_keys = []
@@ -27,3 +27,7 @@ def present():
     if censys_valid_keys:
         print_title('Censys')
         print_keys(censys_valid_keys)
+
+
+def write(output_file: str):
+    write_to_csv('censys', censys_valid_keys, output_file)

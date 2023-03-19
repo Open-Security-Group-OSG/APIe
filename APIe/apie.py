@@ -1,14 +1,14 @@
 from argparse import ArgumentParser
-from other.output import open_csv_file, write_to_csv, print_total
+from other.output import open_csv_file, print_total
 from other.logger import logging, log, set_logging_config
 from other.lists import deduplicate_input, invalid_clean_up, invalid_keys
-from APIs.shodan_api import check as check_shodan, present as present_shodan
+from APIs.shodan_api import check as check_shodan, present as present_shodan, write as write_shodan
 from APIs.shodan_api import shodan_basic_keys, shodan_dev_keys, shodan_edu_keys, shodan_oss_keys
-from APIs.censys_api import check as check_censys, present as present_censys
+from APIs.censys_api import check as check_censys, present as present_censys, write as write_censys
 from APIs.censys_api import censys_valid_keys
-from APIs.virustotal_api import check as check_virustotal, present as present_virustotal
+from APIs.virustotal_api import check as check_virustotal, present as present_virustotal, write as write_virustotal
 from APIs.virustotal_api import vt_valid_keys
-from APIs.binaryedge_api import check as check_binaryedge, present as present_binaryedge
+from APIs.binaryedge_api import check as check_binaryedge, present as present_binaryedge, write as write_binaryedge
 from APIs.binaryedge_api import binaryedge_free_keys, binaryedge_starter_keys, binaryedge_business_keys, binaryedge_enterprise_keys
 
 from rich import print
@@ -48,19 +48,13 @@ if __name__ in "__main__":
     output_file = open_csv_file("output" if args.output_list is None else args.output_list)
 
     # Writing Shodan
-    write_to_csv('shodan', shodan_basic_keys, output_file)
-    write_to_csv('shodan', shodan_oss_keys, output_file)
-    write_to_csv('shodan', shodan_dev_keys, output_file)
-    write_to_csv('shodan', shodan_edu_keys, output_file)
+    write_shodan(output_file)
     # Writing Censys
-    write_to_csv('censys', censys_valid_keys, output_file)
+    write_censys(output_file)
     # Writing VirusTotal
-    write_to_csv('virustotal', vt_valid_keys, output_file)
+    write_virustotal(output_file)
     # Writing BinaryEdge
-    write_to_csv('binaryedge', binaryedge_free_keys, output_file)
-    write_to_csv('binaryedge', binaryedge_starter_keys, output_file)
-    write_to_csv('binaryedge', binaryedge_business_keys, output_file)
-    write_to_csv('binaryedge', binaryedge_enterprise_keys, output_file)
+    write_binaryedge(output_file)
     # Present user-friendly output
     present_shodan()
     present_censys()
