@@ -136,4 +136,4 @@ dmypy.json
 
 testing.py
 
-example.keys
+*.keys
