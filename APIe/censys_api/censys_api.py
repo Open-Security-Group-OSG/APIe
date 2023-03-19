@@ -4,7 +4,6 @@ from other.logger import log
 from other.output import print_title, print_keys
 
 censys_valid_keys = []
-censys_invalid_keys = []
 
 
 def check(id_and_secret: str):

@@ -27,12 +27,8 @@ if __name__ in "__main__":
 
     log.info("[bold yellow]Checking keys...[/bold yellow]")
     # Keys deduplication
-    with open(args.input_list, 'r') as keys_list:
-        deduplicated = list(dict.fromkeys(keys_list.readlines()))
-        keys_to_check = []
-        for key in deduplicated:
-            keys_to_check.append(key.replace("\n", "").strip())
-
+    keys_to_check = deduplicate_input(args.input_list)
+    invalid_keys[0] = keys_to_check
         # Shodan validation
         for key in keys_to_check:
             check_shodan(key)

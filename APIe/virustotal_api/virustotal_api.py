@@ -3,7 +3,6 @@ from other.logger import log
 from other.output import print_title, print_keys
 
 vt_valid_keys = []
-vt_invalid_keys = []
 
 
 def check(key: str):

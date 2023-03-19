@@ -6,7 +6,6 @@ shodan_basic_keys = []
 shodan_oss_keys = []
 shodan_dev_keys = []
 shodan_edu_keys = []
-shodan_invalid_keys = []
 
 
 def check(key: str):

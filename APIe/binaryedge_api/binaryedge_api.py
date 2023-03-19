@@ -6,7 +6,6 @@ binaryedge_free_keys = []
 binaryedge_starter_keys = []
 binaryedge_business_keys = []
 binaryedge_enterprise_keys = []
-binaryedge_invalid_keys = []
 
 
 def check(key: str):
