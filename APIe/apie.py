@@ -1,5 +1,4 @@
 from argparse import ArgumentParser
-from textwrap import dedent
 from other.output import open_csv_file, write_to_csv, print_total
 from other.logger import logging, log, set_logging_config
 from other.lists import deduplicate_input, invalid_clean_up, invalid_keys
@@ -68,9 +67,8 @@ if __name__ in "__main__":
     present_virustotal()
     present_binaryedge()
 
-        print_total([keys_to_check], app_name='\nTotal Keys:')
-        print_total([shodan_basic_keys, shodan_oss_keys, shodan_dev_keys, shodan_edu_keys], app_name='[SHODAN]')
-        print_total([censys_valid_keys], app_name='[CENSYS]')
-        print_total([vt_valid_keys], app_name='[VIRUSTOTAL]')
-        print_total([binaryedge_free_keys, binaryedge_starter_keys, binaryedge_business_keys, binaryedge_enterprise_keys], app_name='[BINARYEDGE]')
-        print_total([binaryedge_invalid_keys], is_valid=False)
+    print_total([shodan_basic_keys, shodan_oss_keys, shodan_dev_keys, shodan_edu_keys], app_name='\n[SHODAN] ')
+    print_total([censys_valid_keys], app_name='[CENSYS] ')
+    print_total([vt_valid_keys], app_name='[VIRUSTOTAL] ')
+    print_total([binaryedge_free_keys, binaryedge_starter_keys, binaryedge_business_keys, binaryedge_enterprise_keys], app_name='[BINARYEDGE]')
+    print_total([invalid_keys[0]], is_valid=False, app_name='[bold blue]')
