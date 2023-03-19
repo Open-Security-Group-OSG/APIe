@@ -19,7 +19,7 @@ def print_total(list_of_key_lists: list, is_valid: bool = True, app_name: str = 
     for key_list in list_of_key_lists:
         total += len(key_list)
     valid = ['Valid', 'green'] if is_valid else ['Invalid', 'red']
-    print(f'[bold blue]{app_name}[/] {valid[0]} Keys: [bold {valid[1]}]{total}[/]')
+    print(f'[bold blue]{app_name}[/]{valid[0]} Keys: [bold {valid[1]}]{total}[/]')
 
 
 def open_csv_file(name: str = 'output'):
