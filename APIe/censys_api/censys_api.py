@@ -2,11 +2,12 @@ from requests import get
 from requests.auth import HTTPBasicAuth
 from other.logger import log
 from other.output import print_title, print_keys
+from other.lists import invalid_keys
 
 censys_valid_keys = []
 
 
-def check(id_and_secret: str):
+def check(id_and_secret: str, list_id: int):
     credentials = id_and_secret.split(':')
     try:
         allowance = get(f'https://search.censys.io/api/v1/account', auth=HTTPBasicAuth(credentials[0], credentials[1])).json()['quota']['allowance']
@@ -18,7 +19,7 @@ def check(id_and_secret: str):
     except:
         log.info(f'[bold blue]{id_and_secret}[/] is [bold red]INVALID[/] as [bold yellow]CENSYS KEY[/]')
 
-        censys_invalid_keys.append(id_and_secret)
+        invalid_keys[list_id].append(id_and_secret)
         return [id_and_secret, False]
 
 
