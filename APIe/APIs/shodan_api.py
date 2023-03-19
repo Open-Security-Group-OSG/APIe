@@ -1,6 +1,6 @@
 from requests import get
 from other.logger import log
-from other.output import print_title, print_keys
+from other.output import print_title, print_keys, write_to_csv
 from other.lists import invalid_keys
 
 shodan_basic_keys = []
@@ -46,3 +46,10 @@ def present():
     if shodan_edu_keys:
         print_title('Shodan', 'EDU')
         print_keys(shodan_edu_keys, keep_status=False)
+
+
+def write(output_file: str):
+    write_to_csv('shodan', shodan_basic_keys, output_file)
+    write_to_csv('shodan', shodan_oss_keys, output_file)
+    write_to_csv('shodan', shodan_dev_keys, output_file)
+    write_to_csv('shodan', shodan_edu_keys, output_file)

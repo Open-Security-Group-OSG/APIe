@@ -1,6 +1,6 @@
 from requests import get
 from other.logger import log
-from other.output import print_title, print_keys
+from other.output import print_title, print_keys, write_to_csv
 from other.lists import invalid_keys
 
 binaryedge_free_keys = []
@@ -46,3 +46,10 @@ def present():
     if binaryedge_enterprise_keys:
         print_title('BinaryEdge', 'ENTERPRISE')
         print_keys(binaryedge_enterprise_keys, keep_status=False)
+
+
+def write(output_file: str):
+    write_to_csv('binaryedge', binaryedge_free_keys, output_file)
+    write_to_csv('binaryedge', binaryedge_starter_keys, output_file)
+    write_to_csv('binaryedge', binaryedge_business_keys, output_file)
+    write_to_csv('binaryedge', binaryedge_enterprise_keys, output_file)

@@ -1,6 +1,6 @@
 from requests import get
 from other.logger import log
-from other.output import print_title, print_keys
+from other.output import print_title, print_keys, write_to_csv
 from other.lists import invalid_keys
 
 vt_valid_keys = []
@@ -24,3 +24,7 @@ def present():
     if vt_valid_keys:
         print_title('VirusTotal')
         print_keys(vt_valid_keys)
+
+
+def write(output_file: str):
+    write_to_csv('virustotal', vt_valid_keys, output_file)
