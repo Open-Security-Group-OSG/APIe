@@ -2,11 +2,11 @@ from argparse import ArgumentParser
 from other.output import open_csv_file, print_total
 from other.logger import logging, log, set_logging_config
 from other.lists import deduplicate_input, invalid_clean_up, invalid_keys
-from APIs.shodan_api import check as check_shodan, present as present_shodan, write as write_shodan
-from APIs.shodan_api import shodan_basic_keys, shodan_dev_keys, shodan_edu_keys, shodan_oss_keys
-from APIs.censys_api import check as check_censys, present as present_censys, write as write_censys
-from APIs.censys_api import censys_valid_keys
-from APIs.virustotal_api import check as check_virustotal, present as present_virustotal, write as write_virustotal
+from other.user.output import present_valid_keys, print_totals  # TODO Sort Alphabetically Everything Below
+from APIs.shodan_api import check as check_shodan, write as write_shodan
+from APIs.censys_api import check as check_censys, write as write_censys
+from APIs.virustotal_api import check as check_virustotal, write as write_virustotal
+from APIs.binaryedge_api import check as check_binaryedge, write as write_binaryedge
 from APIs.virustotal_api import vt_valid_keys
 from APIs.binaryedge_api import check as check_binaryedge, present as present_binaryedge, write as write_binaryedge
 from APIs.binaryedge_api import binaryedge_free_keys, binaryedge_starter_keys, binaryedge_business_keys, binaryedge_enterprise_keys
@@ -55,14 +55,7 @@ if __name__ in "__main__":
     write_virustotal(output_file)
     # Writing BinaryEdge
     write_binaryedge(output_file)
-    # Present user-friendly output
-    present_shodan()
-    present_censys()
-    present_virustotal()
-    present_binaryedge()
 
-    print_total([shodan_basic_keys, shodan_oss_keys, shodan_dev_keys, shodan_edu_keys], app_name='\n[SHODAN] ')
-    print_total([censys_valid_keys], app_name='[CENSYS] ')
-    print_total([vt_valid_keys], app_name='[VIRUSTOTAL] ')
-    print_total([binaryedge_free_keys, binaryedge_starter_keys, binaryedge_business_keys, binaryedge_enterprise_keys], app_name='[BINARYEDGE]')
-    print_total([invalid_keys[0]], is_valid=False, app_name='[bold blue]')
+    # Present user-friendly output
+    present_valid_keys()
+    print_totals()
