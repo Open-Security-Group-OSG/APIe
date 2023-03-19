@@ -2,14 +2,14 @@ from argparse import ArgumentParser
 from other.output import open_csv_file, write_to_csv, print_total
 from other.logger import logging, log, set_logging_config
 from other.lists import deduplicate_input, invalid_clean_up, invalid_keys
-from shodan_api.shodan_api import check as check_shodan, present as present_shodan
-from shodan_api.shodan_api import shodan_basic_keys, shodan_dev_keys, shodan_edu_keys, shodan_oss_keys
-from censys_api.censys_api import check as check_censys, present as present_censys
-from censys_api.censys_api import censys_valid_keys
-from virustotal_api.virustotal_api import check as check_virustotal, present as present_virustotal
-from virustotal_api.virustotal_api import vt_valid_keys
-from binaryedge_api.binaryedge_api import check as check_binaryedge, present as present_binaryedge
-from binaryedge_api.binaryedge_api import binaryedge_free_keys, binaryedge_starter_keys, binaryedge_business_keys, binaryedge_enterprise_keys
+from APIs.shodan_api import check as check_shodan, present as present_shodan
+from APIs.shodan_api import shodan_basic_keys, shodan_dev_keys, shodan_edu_keys, shodan_oss_keys
+from APIs.censys_api import check as check_censys, present as present_censys
+from APIs.censys_api import censys_valid_keys
+from APIs.virustotal_api import check as check_virustotal, present as present_virustotal
+from APIs.virustotal_api import vt_valid_keys
+from APIs.binaryedge_api import check as check_binaryedge, present as present_binaryedge
+from APIs.binaryedge_api import binaryedge_free_keys, binaryedge_starter_keys, binaryedge_business_keys, binaryedge_enterprise_keys
 
 from rich import print
 
