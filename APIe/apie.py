@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from other.output import open_csv_file, print_total
+from other.output import open_csv_file
 from other.logger import logging, log, set_logging_config
 from other.lists import deduplicate_input, invalid_clean_up, invalid_keys
 from other.user.output import present_valid_keys, print_totals  # TODO Sort Alphabetically Everything Below
@@ -7,9 +7,6 @@ from APIs.shodan_api import check as check_shodan, write as write_shodan
 from APIs.censys_api import check as check_censys, write as write_censys
 from APIs.virustotal_api import check as check_virustotal, write as write_virustotal
 from APIs.binaryedge_api import check as check_binaryedge, write as write_binaryedge
-from APIs.virustotal_api import vt_valid_keys
-from APIs.binaryedge_api import check as check_binaryedge, present as present_binaryedge, write as write_binaryedge
-from APIs.binaryedge_api import binaryedge_free_keys, binaryedge_starter_keys, binaryedge_business_keys, binaryedge_enterprise_keys
 
 from rich import print
 
@@ -29,31 +26,29 @@ if __name__ in "__main__":
     # Keys deduplication
     keys_to_check = deduplicate_input(args.input_list)
     invalid_keys[0] = keys_to_check
-    # Shodan validation
-    for key in invalid_keys[0]:
+
+    # List every API here
+    for key in invalid_keys[0]:  # TODO Sort Alphabetically
         check_shodan(key, 1)
     invalid_clean_up(0)
-    # Censys validation
+
     for key in invalid_keys[1]:
         check_censys(key, 0)
     invalid_clean_up(1)
-    # VirusTotal validation
+
     for key in invalid_keys[0]:
         check_virustotal(key, 1)
     invalid_clean_up(0)
-    # BinaryEdge validation
+
     for key in invalid_keys[1]:
         check_binaryedge(key, 0)
 
     output_file = open_csv_file("output" if args.output_list is None else args.output_list)
 
-    # Writing Shodan
-    write_shodan(output_file)
-    # Writing Censys
+    # List every API here
+    write_shodan(output_file)  # TODO Sort Alphabetically
     write_censys(output_file)
-    # Writing VirusTotal
     write_virustotal(output_file)
-    # Writing BinaryEdge
     write_binaryedge(output_file)
 
     # Present user-friendly output
