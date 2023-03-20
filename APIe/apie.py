@@ -3,12 +3,11 @@ from other.output import open_csv_file
 from other.logger import logging, log, set_logging_config
 from other.lists import deduplicate_input, invalid_clean_up, invalid_keys
 from other.user.output import present_valid_keys, print_totals
-from APIs.binaryedge_api import check as check_binaryedge, write as write_binaryedge
+from APIs.binaryedge_api import BinaryEdgeAPI
 from APIs.censys_api import check as check_censys, write as write_censys
 from APIs.fofa_api import FofaAPI
 from APIs.shodan_api import check as check_shodan, write as write_shodan
 from APIs.virustotal_api import check as check_virustotal, write as write_virustotal
-
 
 
 from rich import print
@@ -32,7 +31,7 @@ if __name__ in "__main__":
 
     # List every API here
     for key in invalid_keys[0]:
-        check_binaryedge(key, 1)
+        BinaryEdgeAPI().check(key, 1)
     invalid_clean_up(0)
 
     for key in invalid_keys[1]:
@@ -53,7 +52,7 @@ if __name__ in "__main__":
     output_file = open_csv_file("output" if args.output_list is None else args.output_list)
 
     # List every API here
-    write_binaryedge(output_file)
+    BinaryEdgeAPI().write(output_file)
     write_censys(output_file)
     FofaAPI().write(output_file)
     write_shodan(output_file)

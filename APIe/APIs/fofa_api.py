@@ -1,5 +1,4 @@
 from requests import get
-
 from other.logger import log
 from other.output import print_title, print_keys, write_to_csv
 from other.lists import invalid_keys
@@ -8,7 +7,7 @@ from re import search
 
 
 class FofaAPI:
-    fofa_valid_keys = []
+    valid_keys = []
 
     def __init__(self):
         self.name = 'FOFA'
@@ -33,13 +32,13 @@ class FofaAPI:
             if search(regex[self.name.lower()], email_and_key):
                 vip_level = get(f'https://fofa.info/api/v1/info/my?email={credentials[0]}&key={credentials[1]}').json()['vip_level']
                 log.info(f'[bold cyan]EMAIL:[/] [bold blue]{credentials[0]}[/] [bold cyan]KEY:[/] [bold blue]{credentials[1]}[/] are [bold green]VALID[/] [bold yellow]{self.name} CREDENTIALS[/] and their vip level is [bold cyan]{vip_level}[/]')
-                self.fofa_valid_keys.append([email_and_key, vip_level])
+                self.valid_keys.append([email_and_key, vip_level])
                 return [email_and_key, True, vip_level]
 
             elif search(regex[self.name.lower()], email_and_key_reversed):
                 vip_level = get(f'https://fofa.info/api/v1/info/my?email={credentials[1]}&key={credentials[0]}').json()['vip_level']
                 log.info(f'[bold cyan]EMAIL:[/] [bold blue]{credentials[1]}[/] [bold cyan]KEY:[/] [bold blue]{credentials[0]}[/] are [bold green]VALID[/] [bold yellow]{self.name} CREDENTIALS[/] and their vip level is [bold cyan]{vip_level}[/]')
-                self.fofa_valid_keys.append([email_and_key_reversed, vip_level])
+                self.valid_keys.append([email_and_key_reversed, vip_level])
                 return [email_and_key_reversed, True, vip_level]
 
             else:
@@ -52,18 +51,18 @@ class FofaAPI:
             return [email_and_key, False]
 
     def present(self):
-        """Visually presents all valid credentials in Terminal
+        """Visually presents all valid credentials in terminal
 
         :return: visual representation of valid credentials
         """
-        if self.fofa_valid_keys:
+        if self.valid_keys:
             print_title(self.name)
-            print_keys(self.fofa_valid_keys)
+            print_keys(self.valid_keys)
 
     def write(self, output_file: str):
-        """
+        """Writes valid credentials
 
         :param str output_file: csv file to write valid credentials to
         :return: appends valid credentials to specified csv file
         """
-        write_to_csv(self.name.lower(), self.fofa_valid_keys, output_file)
+        write_to_csv(self.name.lower(), self.valid_keys, output_file)
