@@ -2,6 +2,9 @@ from requests import get
 from other.logger import log
 from other.output import print_title, print_keys, write_to_csv
 from other.lists import invalid_keys
+from other.dictionaries import regex
+from re import search
+
 
 shodan_basic_keys = []
 shodan_oss_keys = []
@@ -11,24 +14,29 @@ shodan_edu_keys = []
 
 def check(key: str, list_id: int):
     try:
-        key_plan = get(f'https://api.shodan.io/api-info?key={key}').json()['plan']
-        log.info(f'[bold blue]{key}[/] is a [bold green]VALID[/] [bold yellow]SHODAN KEY[/] and plan is [bold cyan]{str(key_plan).upper()}[/]')
+        if search(regex['shodan'], key):
+            key_plan = get(f'https://api.shodan.io/api-info?key={key}').json()['plan']
+            log.info(f'[bold blue]{key}[/] is a [bold green]VALID[/] [bold yellow]SHODAN KEY[/] and plan is [bold cyan]{str(key_plan).upper()}[/]')
 
-        match key_plan.lower():
-            case 'basic':
-                shodan_basic_keys.append([key, key_plan])
-            case 'oss':
-                shodan_oss_keys.append([key, key_plan])
-            case 'dev':
-                shodan_dev_keys.append([key, key_plan])
-            case 'edu':
-                shodan_edu_keys.append([key, key_plan])
-            case _:
-                invalid_keys[list_id].append(key)
-                log.warning(f'[bold yellow][ATTENTION][/] Weird key detected - [bold red]{key}[/], plan is [bold cyan]{key_plan}[/], [bold red]manual verification required[/]')
-        return [key, True, key_plan]
+            match key_plan.lower():
+                case 'basic':
+                    shodan_basic_keys.append([key, key_plan])
+                case 'oss':
+                    shodan_oss_keys.append([key, key_plan])
+                case 'dev':
+                    shodan_dev_keys.append([key, key_plan])
+                case 'edu':
+                    shodan_edu_keys.append([key, key_plan])
+                case _:
+                    invalid_keys[list_id].append(key)
+                    log.warning(f'[bold yellow][ATTENTION][/] Weird key detected - [bold red]{key}[/], plan is [bold cyan]{key_plan}[/], [bold red]manual verification required[/]')
+            return [key, True, key_plan]
+        else:
+            log.info(f'[bold blue]{key}[/] is [bold red]INVALID[/] as [bold yellow]SHODAN KEY[/] according to regex')
+            invalid_keys[list_id].append(key)
+            return [key, False]
     except:
-        log.info(f'[bold blue]{key}[/] is [bold red]INVALID[/] as [bold yellow]SHODAN KEY[/]')
+        log.info(f'[bold blue]{key}[/] is [bold red]INVALID[/] as [bold yellow]SHODAN KEY[/] according to API call')
         invalid_keys[list_id].append(key)
         return [key, False]
 
