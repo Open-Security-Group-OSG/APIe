@@ -11,8 +11,14 @@ censys_valid_keys = []
 
 def check(id_and_secret: str, list_id: int):
     credentials = id_and_secret.split(':')
+
     try:
         id_and_secret_reversed = f'{credentials[1]}:{credentials[0]}'
+    except:
+        log.info(f'[bold blue]{id_and_secret}[/] is [bold red]INVALID[/] as [bold yellow]CENSYS KEY[/] due to lacks second value')
+        invalid_keys[list_id].append(id_and_secret)
+        return [id_and_secret, False]
+    try:
         if search(regex['censys'], id_and_secret):
             allowance = get(f'https://search.censys.io/api/v1/account', auth=HTTPBasicAuth(credentials[0], credentials[1])).json()['quota']['allowance']
             log.info(f'[bold cyan]ID:[/] [bold blue]{credentials[0]}[/] [bold cyan]SECRET:[/] [bold blue]{credentials[1]}[/] is a [bold green]VALID[/] [bold yellow]CENSYS KEY[/] and has allowance of [bold cyan]{allowance}[/]')
