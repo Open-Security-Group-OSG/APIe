@@ -1,15 +1,14 @@
 from argparse import ArgumentParser
-from other.output import open_csv_file, write_to_csv, print_total
+from other.output import open_csv_file
 from other.logger import logging, log, set_logging_config
 from other.lists import deduplicate_input, invalid_clean_up, invalid_keys
-from shodan_api.shodan_api import check as check_shodan, present as present_shodan
-from shodan_api.shodan_api import shodan_basic_keys, shodan_dev_keys, shodan_edu_keys, shodan_oss_keys
-from censys_api.censys_api import check as check_censys, present as present_censys
-from censys_api.censys_api import censys_valid_keys
-from virustotal_api.virustotal_api import check as check_virustotal, present as present_virustotal
-from virustotal_api.virustotal_api import vt_valid_keys
-from binaryedge_api.binaryedge_api import check as check_binaryedge, present as present_binaryedge
-from binaryedge_api.binaryedge_api import binaryedge_free_keys, binaryedge_starter_keys, binaryedge_business_keys, binaryedge_enterprise_keys
+from other.user.output import present_valid_keys, print_totals
+from APIs.binaryedge_api import BinaryEdgeAPI
+from APIs.censys_api import CensysAPI
+from APIs.fofa_api import FofaAPI
+from APIs.shodan_api import ShodanAPI
+from APIs.virustotal_api import VirusTotalAPI
+
 
 from rich import print
 
@@ -29,46 +28,36 @@ if __name__ in "__main__":
     # Keys deduplication
     keys_to_check = deduplicate_input(args.input_list)
     invalid_keys[0] = keys_to_check
-    # Shodan validation
+
+    # List every API here
     for key in invalid_keys[0]:
-        check_shodan(key, 1)
+        BinaryEdgeAPI().check(key, 1)
     invalid_clean_up(0)
-    # Censys validation
+
     for key in invalid_keys[1]:
-        check_censys(key, 0)
+        CensysAPI().check(key, 0)
     invalid_clean_up(1)
-    # VirusTotal validation
+
     for key in invalid_keys[0]:
-        check_virustotal(key, 1)
+        FofaAPI().check(key, 1)
     invalid_clean_up(0)
-    # BinaryEdge validation
+
     for key in invalid_keys[1]:
-        check_binaryedge(key, 0)
+        ShodanAPI().check(key, 0)
+    invalid_clean_up(1)
+
+    for key in invalid_keys[0]:
+        VirusTotalAPI().check(key, 1)
 
     output_file = open_csv_file("output" if args.output_list is None else args.output_list)
 
-    # Writing Shodan
-    write_to_csv('shodan', shodan_basic_keys, output_file)
-    write_to_csv('shodan', shodan_oss_keys, output_file)
-    write_to_csv('shodan', shodan_dev_keys, output_file)
-    write_to_csv('shodan', shodan_edu_keys, output_file)
-    # Writing Censys
-    write_to_csv('censys', censys_valid_keys, output_file)
-    # Writing VirusTotal
-    write_to_csv('virustotal', vt_valid_keys, output_file)
-    # Writing BinaryEdge
-    write_to_csv('binaryedge', binaryedge_free_keys, output_file)
-    write_to_csv('binaryedge', binaryedge_starter_keys, output_file)
-    write_to_csv('binaryedge', binaryedge_business_keys, output_file)
-    write_to_csv('binaryedge', binaryedge_enterprise_keys, output_file)
-    # Present user-friendly output
-    present_shodan()
-    present_censys()
-    present_virustotal()
-    present_binaryedge()
+    # List every API here
+    BinaryEdgeAPI().write(output_file)
+    CensysAPI().write(output_file)
+    FofaAPI().write(output_file)
+    ShodanAPI().write(output_file)
+    VirusTotalAPI().write(output_file)
 
-    print_total([shodan_basic_keys, shodan_oss_keys, shodan_dev_keys, shodan_edu_keys], app_name='\n[SHODAN] ')
-    print_total([censys_valid_keys], app_name='[CENSYS] ')
-    print_total([vt_valid_keys], app_name='[VIRUSTOTAL] ')
-    print_total([binaryedge_free_keys, binaryedge_starter_keys, binaryedge_business_keys, binaryedge_enterprise_keys], app_name='[BINARYEDGE]')
-    print_total([invalid_keys[0]], is_valid=False, app_name='[bold blue]')
+    # Present user-friendly output
+    present_valid_keys()
+    print_totals()
