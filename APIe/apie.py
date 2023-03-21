@@ -4,7 +4,7 @@ from other.logger import logging, log, set_logging_config
 from other.lists import deduplicate_input, invalid_clean_up, invalid_keys
 from other.user.output import present_valid_keys, print_totals
 from APIs.binaryedge_api import BinaryEdgeAPI
-from APIs.censys_api import check as check_censys, write as write_censys
+from APIs.censys_api import CensysAPI
 from APIs.fofa_api import FofaAPI
 from APIs.shodan_api import check as check_shodan, write as write_shodan
 from APIs.virustotal_api import check as check_virustotal, write as write_virustotal
@@ -35,25 +35,25 @@ if __name__ in "__main__":
     invalid_clean_up(0)
 
     for key in invalid_keys[1]:
-        check_censys(key, 0)
+        CensysAPI().check(key, 0)
     invalid_clean_up(1)
 
     for key in invalid_keys[0]:
         FofaAPI().check(key, 1)
     invalid_clean_up(0)
 
-    for key in invalid_keys[0]:
-        check_shodan(key, 1)
-    invalid_clean_up(0)
-
     for key in invalid_keys[1]:
-        check_virustotal(key, 0)
+        check_shodan(key, 0)
+    invalid_clean_up(1)
+
+    for key in invalid_keys[0]:
+        check_virustotal(key, 1)
 
     output_file = open_csv_file("output" if args.output_list is None else args.output_list)
 
     # List every API here
     BinaryEdgeAPI().write(output_file)
-    write_censys(output_file)
+    CensysAPI().write(output_file)
     FofaAPI().write(output_file)
     write_shodan(output_file)
     write_virustotal(output_file)
