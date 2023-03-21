@@ -4,8 +4,7 @@ from APIs.binaryedge_api import BinaryEdgeAPI
 from APIs.censys_api import CensysAPI
 from APIs.fofa_api import FofaAPI
 from APIs.shodan_api import ShodanAPI
-from APIs.virustotal_api import present as present_virustotal
-from APIs.virustotal_api import vt_valid_keys
+from APIs.virustotal_api import VirusTotalAPI
 
 
 def present_valid_keys():
@@ -14,7 +13,7 @@ def present_valid_keys():
     CensysAPI().present()
     FofaAPI().present()
     ShodanAPI().present()
-    present_virustotal()
+    VirusTotalAPI().present()
 
 
 def print_totals():
@@ -23,6 +22,6 @@ def print_totals():
     print_total([CensysAPI().valid_keys], app_name=f'[{CensysAPI().name}] ')
     print_total([FofaAPI().valid_keys], app_name=f'[{FofaAPI().name}] ')
     print_total([ShodanAPI().basic_keys, ShodanAPI().oss_keys, ShodanAPI().dev_keys, ShodanAPI().edu_keys], app_name=f'[{ShodanAPI().name}] ')
-    print_total([vt_valid_keys], app_name='[VIRUSTOTAL] ')
+    print_total([VirusTotalAPI().valid_keys], app_name=f'[{VirusTotalAPI().name}] ')
     # Total Invalid Keys
     print_total([invalid_keys[0]], is_valid=False, app_name='[bold blue]')

@@ -7,7 +7,7 @@ from APIs.binaryedge_api import BinaryEdgeAPI
 from APIs.censys_api import CensysAPI
 from APIs.fofa_api import FofaAPI
 from APIs.shodan_api import ShodanAPI
-from APIs.virustotal_api import check as check_virustotal, write as write_virustotal
+from APIs.virustotal_api import VirusTotalAPI
 
 
 from rich import print
@@ -47,7 +47,7 @@ if __name__ in "__main__":
     invalid_clean_up(1)
 
     for key in invalid_keys[0]:
-        check_virustotal(key, 1)
+        VirusTotalAPI().check(key, 1)
 
     output_file = open_csv_file("output" if args.output_list is None else args.output_list)
 
@@ -56,7 +56,7 @@ if __name__ in "__main__":
     CensysAPI().write(output_file)
     FofaAPI().write(output_file)
     ShodanAPI().write(output_file)
-    write_virustotal(output_file)
+    VirusTotalAPI().write(output_file)
 
     # Present user-friendly output
     present_valid_keys()
