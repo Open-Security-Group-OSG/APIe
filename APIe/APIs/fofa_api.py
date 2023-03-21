@@ -17,7 +17,7 @@ class FofaAPI:
 
         :param str email_and_key: email and key pair as one string separated by ':'
         :param int list_id: ID of list to be used for invalid keys
-        :return: list with email_and_key, boolean specifying if keypair is valid and, if valid, vip_level from API call
+        :return: list with email_and_key, boolean specifying if key pair is valid and, if valid, vip_level from API call
         """
         credentials = email_and_key.split(':')
 

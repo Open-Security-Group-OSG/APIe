@@ -18,7 +18,7 @@ class BinaryEdgeAPI:  # TODO Remove API name from lists below
     def check(self, key: str, list_id: int):
         """Checks if credentials are valid as BinaryEdge API credentials
 
-        :param str key: API key as string
+        :param str key: API key as a string
         :param int list_id: ID of list to be used for invalid keys
         :return: list with key, boolean specifying if key is valid and, if valid, subscription name from API call
         """
